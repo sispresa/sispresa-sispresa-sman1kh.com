@@ -745,13 +745,41 @@ select:focus{
     margin-bottom:10px;
 }
 
+/* ====== PITA JUDUL MENU (mis. "PANEL ADMIN", "DATA PRESENSI SISWA") ======
+   Sebelumnya judul menu cuma teks polos yang duduk langsung di atas foto
+   sekolah yang buram (jadi kelihatan kepotong/tidak rapi, kontras dengan
+   kartu putih bersih di bawahnya). Sekarang dibungkus jadi satu pita/
+   banner biru bulat rapi dengan bayangan, supaya terlihat seperti header
+   yang memang didesain, dan menyambung rapi ke kartu putih di bawahnya. */
+.container-hero{
+    background:linear-gradient(135deg,#0d6efd,#4facfe);
+    border-radius:16px;
+    padding:20px 22px;
+    margin-bottom:20px;
+    box-shadow:0 10px 26px rgba(13,110,253,0.35);
+}
+
+.container-hero h2,
+.container-hero .card-title{
+    color:#fff;
+    margin-bottom:0;
+    text-shadow:0 2px 8px rgba(0,0,0,0.35);
+}
+
+.container-hero p{
+    color:#eaf4ff;
+    text-shadow:none;
+}
+
 /* ====== PANEL BUKA SESI (GURU) ====== */
 .sesi-panel{
     background:rgba(255,255,255,0.95);
     border-radius:14px;
     padding:15px 20px;
     margin-top:20px;
+    margin-bottom:20px;
     text-align:left;
+    box-shadow:0 8px 24px rgba(0,0,0,0.18);
 }
 
 .sesi-panel h3{
@@ -1349,7 +1377,13 @@ tbody tr:hover{
 
     .layar-login{
         flex-direction:column;
-        min-height:auto;
+        /* tetap dikunci setinggi layar (bukan "auto") supaya panel biru di
+           kanan/bawah ikut meregang mengisi sisa layar - kalau "auto",
+           kartu login jadi lebih pendek dari layar dan menyisakan celah
+           kosong di bawahnya yang menampakkan foto latar belakang seperti
+           terpotong/​​​​nyambung tidak rapi sebelum footer. */
+        min-height:100vh;
+        min-height:100dvh;
     }
 
     .layar-login-kiri{
@@ -2197,8 +2231,10 @@ tbody tr:hover{
 
     <div class="app-content">
     <div class="container lebar">
+    <div class="container-hero">
     <div class="card-title">
          Presensi Mata Pelajaran
+    </div>
     </div>
 
     <div class="menu-konten" id="menuKontenPresensi">
@@ -2324,7 +2360,9 @@ tbody tr:hover{
 
     <div class="app-content">
     <div class="container lebar">
+    <div class="container-hero">
     <h2>DATA PRESENSI SISWA</h2>
+    </div>
 
     <div class="menu-konten" id="menuKontenScan">
         <div class="sesi-panel">
@@ -2757,8 +2795,10 @@ tbody tr:hover{
 
     <div class="app-content">
     <div class="container lebar">
+    <div class="container-hero">
     <h2>PANEL ADMIN</h2>
-    <p style="text-align:center;color:#f8fafc;font-size:14px;margin-top:-8px;">Anda Sekarang Mengontrol Penuh Atas Seluruh Data Sistem Presensi Dan Portal Akademik Siswa</p>
+    <p style="text-align:center;color:#f8fafc;font-size:14px;margin-top:-8px;margin-bottom:0;">Anda Sekarang Mengontrol Penuh Atas Seluruh Data Sistem Presensi Dan Portal Akademik Siswa</p>
+    </div>
 
     <!-- DASHBOARD -->
     <div class="menu-konten" id="adminKontenDash">
@@ -3700,8 +3740,10 @@ tbody tr:hover{
 
     <div class="app-content">
     <div class="container lebar">
+    <div class="container-hero">
     <div class="card-title">
         👪 Pemantauan Akademik Anak
+    </div>
     </div>
 
     <div class="info-sesi" style="margin-top:0;">
