@@ -2187,6 +2187,60 @@ tbody tr:hover{
         border-radius:18px;
         box-shadow:var(--md-elev-1);
     }
+
+    /* ====================================================================
+       ======  RATAKAN & PUSATKAN KONTEN DI HP (biar tidak mepet tepi)  ======
+       Sebelumnya kartu konten (.container.lebar di dalam .app-content)
+       dibuat selebar penuh HP tanpa jarak samping, jadi kelihatan mepet
+       ke tepi layar dan tidak seimbang. Sekarang diberi jarak (padding)
+       kiri-kanan yang SAMA BESAR, supaya kartu terlihat rapi mengambang
+       di tengah dengan ruang bernapas yang seimbang kiri-kanan. ====== */
+    .app-content{
+        padding-left:12px;
+        padding-right:12px;
+        box-sizing:border-box;
+    }
+
+    .app-content .container.lebar{
+        border-radius:24px;
+    }
+
+    /* Judul berbentuk pita/pil (mis. "📊 Kumpulan Data Sistem",
+       "DATA SISWA SEMUA KELAS") sebelumnya melebar penuh selebar kartu
+       jadi terlihat seperti bar tebal. Sekarang dibuat menyusut mengikuti
+       panjang teksnya sendiri lalu diposisikan tepat di TENGAH, mirip
+       "chip judul" ala Material Design - lebih ringkas & enak dilihat. */
+    h3{
+        display:table;
+        margin-left:auto;
+        margin-right:auto;
+        max-width:100%;
+    }
+
+    /* Isi pita judul menu (mis. "PANEL ADMIN") & sub-teksnya dipastikan
+       benar-benar center dan tidak menempel ke tepi kartu birunya */
+    .container-hero{
+        text-align:center;
+    }
+}
+
+/* ====================================================================
+   ======  SEMBUNYIKAN SCROLLBAR (TOMBOL GESER) DI SELURUH HALAMAN  ======
+   Aplikasi native di Android tidak menampilkan garis/tombol geser saat
+   discroll - scroll tetap bisa jalan seperti biasa dengan jari/mouse,
+   cuma indikator visualnya (scrollbar) yang disembunyikan supaya
+   tampilan lebih bersih & mirip aplikasi asli, bukan halaman web biasa. */
+html,
+.sidebar{
+    scrollbar-width:none;      /* Firefox */
+    -ms-overflow-style:none;   /* Edge/IE lama */
+}
+
+html::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar{
+    display:none;              /* Chrome, Safari, Edge berbasis Chromium (termasuk Chrome Android) */
+    width:0;
+    height:0;
 }
 
 /* ====== EFEK RIPPLE (GELOMBANG SENTUH) KHAS ANDROID ======
