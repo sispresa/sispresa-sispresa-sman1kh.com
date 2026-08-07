@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Sistem Absensi Siswa</title>
+<!-- ====== IDENTITAS "APLIKASI ANDROID" DI BROWSER HP ======
+     theme-color mewarnai status-bar HP mengikuti warna app-bar (biru),
+     mobile-web-app-capable + tag terkait membuat halaman ini bisa
+     di-"Add to Home screen" dan terasa seperti aplikasi native. ====== -->
+<meta name="theme-color" content="#0d6efd">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Absensi Siswa">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -2081,6 +2090,123 @@ tbody tr:hover{
     font-size:11px;
     font-weight:500;
     opacity:0.9;
+}
+
+/* ============================================================================
+   ================  TEMA "ANDROID MODERN" (MATERIAL DESIGN 3)  ================
+   Lapisan gaya tambahan khusus tampilan HP, dibuat menumpuk di atas CSS
+   yang sudah ada (tidak menghapus apa pun) supaya aplikasi terasa lebih
+   mirip aplikasi Android asli: app-bar melengkung + elevasi, drawer/menu
+   bergaya Material dengan indikator aktif berbentuk pil, tombol dengan
+   elevasi & efek ripple saat disentuh, kartu dengan bayangan lembut, dan
+   input bergaya "outlined text field". Warna dasar (biru gradasi) TIDAK
+   diubah supaya identitas/branding sekolah tetap sama.
+   ============================================================================ */
+:root{
+    --md-primary:#0d6efd;
+    --md-primary-2:#4facfe;
+    --md-elev-1:0 1px 3px rgba(0,0,0,0.22), 0 1px 2px rgba(0,0,0,0.16);
+    --md-elev-2:0 3px 8px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.14);
+    --md-elev-3:0 8px 20px rgba(0,0,0,0.26), 0 3px 6px rgba(0,0,0,0.16);
+}
+
+@media (max-width:820px){
+
+    /* ====== APP-BAR: melengkung di bawah + elevasi bertingkat, mirip Material top app bar ====== */
+    .app-topbar{
+        border-radius:0 0 20px 20px;
+        box-shadow:var(--md-elev-3);
+    }
+
+    /* Tombol hamburger jadi "icon button" bulat Material dengan area sentuh jelas */
+    .sidebar-hamburger{
+        border-radius:50%;
+        overflow:hidden;
+        position:relative;
+    }
+
+    /* ====== DRAWER (MENU GESER) BERGAYA MATERIAL NAVIGATION DRAWER ====== */
+    .sidebar{
+        border-radius:0 24px 24px 0;
+        box-shadow:var(--md-elev-3);
+        padding-top:calc(18px + env(safe-area-inset-top,0px));
+    }
+
+    /* Item menu jadi "list item" bulat penuh (pill), lebih empuk & mudah disentuh jari */
+    .sidebar-btn{
+        border-radius:26px;
+        padding:12px 16px;
+        position:relative;
+        overflow:hidden;
+    }
+
+    /* Item aktif diberi indikator pil elevasi, khas Material 3 Navigation Drawer */
+    .sidebar-btn.aktif{
+        box-shadow:var(--md-elev-2);
+    }
+
+    /* ====== KARTU KONTEN: bayangan lembut + sudut lebih membulat (Material Card) ====== */
+    .container{
+        border-radius:24px;
+        box-shadow:var(--md-elev-2);
+    }
+
+    /* ====== TOMBOL: elevasi seperti Material "Filled Button", turun saat ditekan ====== */
+    button{
+        border-radius:16px;
+        box-shadow:var(--md-elev-1);
+        position:relative;
+        overflow:hidden;
+    }
+
+    button:active{
+        box-shadow:none;
+    }
+
+    /* ====== INPUT/SELECT: gaya "outlined text field" Material, dengan cincin fokus ====== */
+    input,select{
+        border-radius:14px;
+        border:1.5px solid rgba(255,255,255,0.45);
+        background:rgba(255,255,255,0.92);
+        transition:border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,select:focus{
+        outline:none;
+        border-color:var(--md-primary);
+        box-shadow:0 0 0 3px rgba(13,110,253,0.25);
+    }
+
+    /* ====== MODAL BOTTOM SHEET: elevasi lebih terasa "mengambang" ====== */
+    .modal-box{
+        box-shadow:0 -8px 30px rgba(0,0,0,0.35);
+    }
+
+    /* ====== KARTU HASIL TABEL (mode kartu di HP) diberi sentuhan Material Card ====== */
+    table.tabel-kartu tbody tr{
+        border-radius:18px;
+        box-shadow:var(--md-elev-1);
+    }
+}
+
+/* ====== EFEK RIPPLE (GELOMBANG SENTUH) KHAS ANDROID ======
+   Elemen tempat ripple akan digambar oleh JavaScript di akhir <body>.
+   Ripple-nya sendiri berupa lingkaran putih transparan yang membesar
+   lalu memudar dari titik sentuhan, persis seperti tombol Material. ====== */
+.md-ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+    background:rgba(255,255,255,0.55);
+    pointer-events:none;
+    animation:mdRippleKembang 0.55s ease-out;
+}
+
+@keyframes mdRippleKembang{
+    to{
+        transform:scale(2.6);
+        opacity:0;
+    }
 }
 
 </style>
@@ -11798,6 +11924,56 @@ pasangScannerFisik({
     });
 
     pengamatTabel.observe(document.body, { childList:true, subtree:true });
+
+})();
+
+/* ====================================================================
+   ======  EFEK RIPPLE (GELOMBANG SENTUH) KHAS ANDROID  ======
+   Setiap kali jari/mouse menyentuh tombol, tombol menu (sidebar-btn),
+   atau tombol kontak footer, muncul lingkaran putih transparan yang
+   membesar dari titik sentuhan lalu memudar - efek "ripple" khas
+   Material Design yang bikin aplikasi terasa lebih hidup & native.
+   Berlaku otomatis untuk SEMUA tombol yang ada maupun yang baru
+   muncul belakangan (lewat event delegation), tanpa mengubah fungsi
+   tombol itu sendiri sama sekali. ====== */
+(function(){
+
+    function buatRipple(elemen, x, y){
+        // elemen sumber ripple harus jadi acuan posisi (relative) supaya
+        // lingkaran ripple bisa diposisikan tepat di titik sentuhan
+        let gaya = getComputedStyle(elemen);
+        if(gaya.position === "static"){
+            elemen.style.position = "relative";
+        }
+        if(gaya.overflow !== "hidden"){
+            elemen.style.overflow = "hidden";
+        }
+
+        let rect = elemen.getBoundingClientRect();
+        let ukuran = Math.max(rect.width, rect.height);
+        let lingkaran = document.createElement("span");
+        lingkaran.className = "md-ripple";
+        lingkaran.style.width = lingkaran.style.height = ukuran + "px";
+        lingkaran.style.left = (x - rect.left - ukuran / 2) + "px";
+        lingkaran.style.top = (y - rect.top - ukuran / 2) + "px";
+
+        elemen.appendChild(lingkaran);
+        lingkaran.addEventListener("animationend", function(){
+            lingkaran.remove();
+        });
+    }
+
+    function penanganSentuh(e){
+        let elemen = e.target.closest("button, .sidebar-btn, .footer-item, .btn-detail, .tutup-btn, .sidebar-hamburger");
+        if(!elemen || elemen.disabled) return;
+
+        let titik = (e.touches && e.touches[0]) ? e.touches[0] : e;
+        buatRipple(elemen, titik.clientX, titik.clientY);
+    }
+
+    // "pointerdown" mencakup sentuhan jari (HP) maupun klik mouse (desktop)
+    // dalam satu event, jadi tidak perlu dobel listener utk touch & mouse
+    document.addEventListener("pointerdown", penanganSentuh);
 
 })();
 
