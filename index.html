@@ -163,6 +163,71 @@ h1::before{
     }
 }
 
+/* ====================================================================
+   ======  SPLASH TRANSISI SETELAH LOGIN (LOGO DULU, BARU HALAMAN)  ======
+   ==================================================================== */
+.splash-transisi{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:18px;
+    background:linear-gradient(135deg,#0d6efd,#4facfe);
+    opacity:0;
+}
+
+.splash-transisi.tampil{
+    display:flex;
+    animation:splashMasuk 0.35s ease forwards;
+}
+
+.splash-transisi.keluar{
+    animation:splashKeluar 0.4s ease forwards;
+}
+
+.splash-transisi-logo{
+    width:130px;
+    height:130px;
+    object-fit:contain;
+    filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4));
+    animation:splashLogoPop 0.7s cubic-bezier(.34,1.56,.64,1);
+}
+
+.splash-transisi-teks{
+    color:white;
+    font-family:'Poppins',Arial,sans-serif;
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-shadow:0 3px 10px rgba(0,0,0,0.5);
+    opacity:0;
+    animation:splashTeksMuncul 0.6s ease 0.25s forwards;
+}
+
+@keyframes splashMasuk{
+    from{ opacity:0; }
+    to{ opacity:1; }
+}
+
+@keyframes splashKeluar{
+    from{ opacity:1; }
+    to{ opacity:0; }
+}
+
+@keyframes splashLogoPop{
+    0%{ transform:scale(0.4); opacity:0; }
+    60%{ transform:scale(1.12); opacity:1; }
+    100%{ transform:scale(1); opacity:1; }
+}
+
+@keyframes splashTeksMuncul{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
 h2{
     color: #f8fafc;
     font-size: 28px;
@@ -1031,6 +1096,259 @@ select:focus{
 .scan-alat-fisik input{
     width:100%;
     box-sizing:border-box;
+}
+
+/* ====================================================================
+   ======  TAMPILAN MODERN UNTUK SEMUA MENU SCAN (KARTU + JAM LIVE)  ======
+   Berlaku otomatis untuk KEEMPAT menu scan yang ada di sistem ini:
+   Scan Presensi Guru, Scan Presensi Sekolah (Admin), Konfirmasi Tidak
+   Sholat (Admin), dan Scan Presensi Tendik (Admin) - karena semuanya
+   memakai class yang sama (.scan-card-modern, .scan-video-wrap, dst).
+   ==================================================================== */
+
+/* --- Kartu pembungkus area scan, gaya "app kasir modern" --- */
+.scan-card-modern{
+    background:linear-gradient(180deg,#ffffff,#f4f8ff);
+    border-radius:20px;
+    padding:18px 18px 22px;
+    margin-top:8px;
+    box-shadow:0 10px 30px rgba(13,110,253,0.14), inset 0 0 0 1px rgba(13,110,253,0.08);
+    position:relative;
+    overflow:hidden;
+}
+
+.scan-card-modern::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:4px;
+    background:linear-gradient(90deg,#0d6efd,#4facfe,#20c997);
+}
+
+/* --- Header kartu: judul di kiri, jam real-time di kanan --- */
+.scan-card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+
+.scan-card-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:17px;
+    font-weight:700;
+    color:#0b3d91;
+}
+
+.scan-card-title-ikon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#0d6efd,#4facfe);
+    font-size:18px;
+    box-shadow:0 6px 14px rgba(13,110,253,0.35);
+}
+
+/* --- Widget jam real-time bergaya jam digital --- */
+.jam-live{
+    background:linear-gradient(135deg,#0b1533,#132a63);
+    border-radius:14px;
+    padding:8px 16px;
+    text-align:center;
+    min-width:150px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08), 0 6px 16px rgba(11,21,51,0.35);
+}
+
+.jam-live-waktu{
+    font-family:'Poppins',Arial,sans-serif;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:2px;
+    color:#7cf5c4;
+    text-shadow:0 0 10px rgba(124,245,196,0.55);
+    line-height:1.15;
+    font-variant-numeric:tabular-nums;
+}
+
+.jam-live-tanggal{
+    font-size:11px;
+    color:#cfe0ff;
+    letter-spacing:0.5px;
+    margin-top:2px;
+    text-transform:capitalize;
+}
+
+/* --- Teks status di atas kotak kamera --- */
+.scan-status-teks{
+    color:#3a4a63;
+    font-size:13.5px;
+    text-align:center;
+    background:#eef4ff;
+    border:1px solid #d7e6ff;
+    border-radius:12px;
+    padding:8px 12px;
+    margin:0 0 12px;
+}
+
+/* --- Bingkai sudut ala scanner QR modern di atas video --- */
+.scan-frame{
+    position:absolute;
+    inset:14px;
+    z-index:3;
+    pointer-events:none;
+}
+
+.scan-corner{
+    position:absolute;
+    width:26px;
+    height:26px;
+    border:3px solid #4facfe;
+    filter:drop-shadow(0 0 6px rgba(79,172,254,0.85));
+}
+
+.scan-corner-tl{ top:0; left:0; border-right:none; border-bottom:none; border-top-left-radius:8px; }
+.scan-corner-tr{ top:0; right:0; border-left:none; border-bottom:none; border-top-right-radius:8px; }
+.scan-corner-bl{ bottom:0; left:0; border-right:none; border-top:none; border-bottom-left-radius:8px; }
+.scan-corner-br{ bottom:0; right:0; border-left:none; border-top:none; border-bottom-right-radius:8px; }
+
+/* --- Pinggiran video menyala biru lembut saat kamera aktif --- */
+.scan-video-wrap.kamera-aktif{
+    box-shadow:0 0 0 3px rgba(32,201,151,0.55), 0 10px 32px rgba(0,0,0,0.4);
+    transition:box-shadow 0.4s ease;
+}
+
+@media (max-width:600px){
+    .scan-card-modern{
+        padding:14px 12px 18px;
+        border-radius:16px;
+    }
+
+    .scan-card-header{
+        justify-content:center;
+        text-align:center;
+    }
+
+    .jam-live{
+        width:100%;
+    }
+
+    .scan-frame{
+        inset:8px;
+    }
+
+    .scan-corner{
+        width:20px;
+        height:20px;
+    }
+}
+
+/* ====================================================================
+   ======  NOTIFIKASI HASIL SCAN (SUPAYA SISWA TAHU SUDAH PRESENSI)  ======
+   Dipakai di 4 tempat: hasil scan guru (scanPesan), scan sekolah
+   (adminScanPesan), konfirmasi sholat (adminScanSholatPesan), dan
+   scan tendik (adminScanTendikPesan). Tampil sebagai kartu dengan
+   ikon bulat besar + teks jelas, supaya begitu QR ditembak, yang
+   scan (siswa/petugas) langsung yakin datanya sudah tercatat. */
+.notif-scan-hasil{
+    display:none;
+    align-items:center;
+    gap:14px;
+    border-radius:16px;
+    padding:14px 16px;
+    margin:15px 0;
+    box-shadow:0 10px 26px rgba(0,0,0,0.14);
+    text-align:left;
+}
+
+.notif-scan-hasil.tampil{
+    display:flex;
+    animation:notifScanMasuk 0.45s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes notifScanMasuk{
+    from{ opacity:0; transform:translateY(-10px) scale(0.92); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+}
+
+.notif-scan-ikon{
+    position:relative;
+    flex:0 0 auto;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:800;
+    color:white;
+}
+
+.notif-scan-teks{
+    flex:1;
+    font-weight:700;
+    font-size:14.5px;
+    line-height:1.4;
+}
+
+.notif-scan-teks small{
+    display:block;
+    font-weight:600;
+    font-size:12px;
+    opacity:0.75;
+    margin-top:2px;
+}
+
+/* --- Varian warna per jenis hasil --- */
+.notif-scan-hasil.tipe-success{ background:#e9f9ef; border:1px solid #b7ecc8; }
+.notif-scan-hasil.tipe-success .notif-scan-ikon{ background:linear-gradient(135deg,#198754,#20c997); }
+.notif-scan-hasil.tipe-success .notif-scan-teks{ color:#0f5132; }
+
+.notif-scan-hasil.tipe-warning{ background:#fff8e6; border:1px solid #ffe69c; }
+.notif-scan-hasil.tipe-warning .notif-scan-ikon{ background:linear-gradient(135deg,#ffc107,#ffda6a); color:#664d03; }
+.notif-scan-hasil.tipe-warning .notif-scan-teks{ color:#664d03; }
+
+.notif-scan-hasil.tipe-danger{ background:#fdecec; border:1px solid #f5b8b8; }
+.notif-scan-hasil.tipe-danger .notif-scan-ikon{ background:linear-gradient(135deg,#dc3545,#ff6b6b); }
+.notif-scan-hasil.tipe-danger .notif-scan-teks{ color:#842029; }
+
+.notif-scan-hasil.tipe-info{ background:#e7f6fb; border:1px solid #b6e6f5; }
+.notif-scan-hasil.tipe-info .notif-scan-ikon{ background:linear-gradient(135deg,#0dcaf0,#4dd8f5); color:#055160; }
+.notif-scan-hasil.tipe-info .notif-scan-teks{ color:#055160; }
+
+/* --- Cincin "nadi" di sekitar ikon khusus utk berhasil presensi ---
+   memberi kesan "tercatat!" yang meyakinkan begitu QR siswa terbaca. */
+.notif-scan-hasil.tipe-success .notif-scan-ikon::after{
+    content:"";
+    position:absolute;
+    inset:-6px;
+    border-radius:50%;
+    border:2px solid #20c997;
+    animation:notifScanNadi 1.1s ease-out 2;
+}
+
+@keyframes notifScanNadi{
+    0%{ transform:scale(0.8); opacity:0.9; }
+    100%{ transform:scale(1.6); opacity:0; }
+}
+
+@media (max-width:600px){
+    .notif-scan-hasil{
+        flex-direction:column;
+        text-align:center;
+        padding:16px 12px;
+    }
+
+    .notif-scan-teks{
+        text-align:center;
+    }
 }
 
 /* ====== HALAMAN LOGIN HANYA TAMPIL SEBELUM LOGIN ====== */
@@ -2315,6 +2633,16 @@ html::-webkit-scrollbar,
     <p id="overlayMuatDataTeks">Menghubungkan ke server data sekolah, mohon tunggu sebentar...</p>
 </div>
 
+<!-- ====== SPLASH TRANSISI SETELAH LOGIN ======
+     Muncul sesaat (logo membesar dengan lembut) begitu login berhasil,
+     SEBELUM halaman tujuan (Siswa/Guru/Admin/Ortu) ditampilkan - supaya
+     perpindahan dari form login ke halaman dalam terasa seperti transisi
+     aplikasi native, bukan berpindah "patah-patah" secara tiba-tiba. ====== -->
+<div id="splashTransisiLogin" class="splash-transisi">
+    <img src="LOGO_123.png" class="splash-transisi-logo" alt="Logo Sekolah">
+    <div class="splash-transisi-teks">SISPRESA</div>
+</div>
+
 <!-- ====== HALAMAN LOGIN (TAMPILAN SPLIT-SCREEN: FOTO SEKOLAH DI KIRI, FORM LOGIN DI KANAN) ====== -->
 <div class="layar-login" id="layarLogin">
 
@@ -2598,46 +2926,54 @@ html::-webkit-scrollbar,
 
             <hr>
 
-            <h3>Scan QR Presensi Siswa</h3>
-
-            <p id="statusSesiUntukScan" style="color:#666;font-size:14px;text-align:center;">
-                Pilih Kelas &amp; Mata Pelajaran di atas untuk memulai scan pada sesi yang sudah dibuka.
-            </p>
-
-            <div class="scan-video-wrap">
-                <video id="videoScan" autoplay muted playsinline></video>
-                <div class="scan-placeholder">
-                    <div class="scan-placeholder-ikon">📷</div>
-                    <div>Kamera belum aktif</div>
+            <div class="scan-card-modern">
+                <div class="scan-card-header">
+                    <div class="scan-card-title">
+                        <span class="scan-card-title-ikon">🔎</span>
+                        <span>Scan QR Presensi Siswa</span>
+                    </div>
+                    <div class="jam-live" data-jam-live>
+                        <div class="jam-live-waktu" data-jam-live-waktu>--:--:--</div>
+                        <div class="jam-live-tanggal" data-jam-live-tanggal>Memuat tanggal...</div>
+                    </div>
                 </div>
-            </div>
-            <canvas id="canvasScan" style="display:none;"></canvas>
 
-            <div class="scan-tombol">
-                <button id="btnMulaiScan" onclick="startScan()">▶ Mulai Scan</button>
-                <button id="btnFlashScan" type="button" style="display:none;background:#997404;">🔦 Senter</button>
-                <button id="btnStopScan" class="stop-btn" onclick="stopScan()" style="display:none;">⏹ Berhenti Scan</button>
-            </div>
+                <p id="statusSesiUntukScan" class="scan-status-teks">
+                    Pilih Kelas &amp; Mata Pelajaran di atas untuk memulai scan pada sesi yang sudah dibuka.
+                </p>
 
-            <div class="scan-alat-fisik">
-                <label for="inputScanAlat">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
-                <input type="text" id="inputScanAlat" placeholder="Klik kolom ini, lalu tembak QR siswa dengan alat scan..." autocomplete="off">
-            </div>
+                <div class="scan-video-wrap">
+                    <video id="videoScan" autoplay muted playsinline></video>
+                    <div class="scan-placeholder">
+                        <div class="scan-placeholder-ikon">📷</div>
+                        <div>Kamera belum aktif</div>
+                    </div>
+                    <div class="scan-frame">
+                        <span class="scan-corner scan-corner-tl"></span>
+                        <span class="scan-corner scan-corner-tr"></span>
+                        <span class="scan-corner scan-corner-bl"></span>
+                        <span class="scan-corner scan-corner-br"></span>
+                    </div>
+                </div>
+                <canvas id="canvasScan" style="display:none;"></canvas>
 
-            <div id="scanPesan" style="
-                display:none;
-                background:#fff3cd;
-                color:#856404;
-                padding:10px;
-                border-radius:10px;
-                text-align:center;
-                font-weight:bold;
-                margin:15px 0;">
-            </div>
+                <div class="scan-tombol">
+                    <button id="btnMulaiScan" onclick="startScan()">▶ Mulai Scan</button>
+                    <button id="btnFlashScan" type="button" style="display:none;background:#997404;">🔦 Senter</button>
+                    <button id="btnStopScan" class="stop-btn" onclick="stopScan()" style="display:none;">⏹ Berhenti Scan</button>
+                </div>
 
-            <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
-                Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
-            </p>
+                <div class="scan-alat-fisik">
+                    <label for="inputScanAlat">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
+                    <input type="text" id="inputScanAlat" placeholder="Klik kolom ini, lalu tembak QR siswa dengan alat scan..." autocomplete="off">
+                </div>
+
+                <div id="scanPesan" class="notif-scan-hasil"></div>
+
+                <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
+                    Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
+                </p>
+            </div>
 
             <hr>
 
@@ -3178,37 +3514,54 @@ html::-webkit-scrollbar,
 
         <hr>
 
-        <h3>Scan QR Presensi Siswa</h3>
-
-        <p id="adminStatusSesiScan" style="color:#666;font-size:14px;text-align:center;">
-            Buka sesi presensi sekolah di atas untuk memulai scan.
-        </p>
-
-        <div class="scan-video-wrap">
-            <video id="videoScanAdmin" autoplay muted playsinline></video>
-            <div class="scan-placeholder">
-                <div class="scan-placeholder-ikon">📷</div>
-                <div>Kamera belum aktif</div>
+        <div class="scan-card-modern">
+            <div class="scan-card-header">
+                <div class="scan-card-title">
+                    <span class="scan-card-title-ikon">🔎</span>
+                    <span>Scan QR Presensi Siswa</span>
+                </div>
+                <div class="jam-live" data-jam-live>
+                    <div class="jam-live-waktu" data-jam-live-waktu>--:--:--</div>
+                    <div class="jam-live-tanggal" data-jam-live-tanggal>Memuat tanggal...</div>
+                </div>
             </div>
+
+            <p id="adminStatusSesiScan" class="scan-status-teks">
+                Buka sesi presensi sekolah di atas untuk memulai scan.
+            </p>
+
+            <div class="scan-video-wrap">
+                <video id="videoScanAdmin" autoplay muted playsinline></video>
+                <div class="scan-placeholder">
+                    <div class="scan-placeholder-ikon">📷</div>
+                    <div>Kamera belum aktif</div>
+                </div>
+                <div class="scan-frame">
+                    <span class="scan-corner scan-corner-tl"></span>
+                    <span class="scan-corner scan-corner-tr"></span>
+                    <span class="scan-corner scan-corner-bl"></span>
+                    <span class="scan-corner scan-corner-br"></span>
+                </div>
+            </div>
+            <canvas id="canvasScanAdmin" style="display:none;"></canvas>
+
+            <div class="scan-tombol">
+                <button id="btnMulaiScanAdmin" onclick="startScanAdmin()">▶ Mulai Scan</button>
+                <button id="btnFlashScanAdmin" type="button" style="display:none;background:#997404;">🔦 Senter</button>
+                <button id="btnStopScanAdmin" class="stop-btn" onclick="stopScanAdmin()" style="display:none;">⏹ Berhenti Scan</button>
+            </div>
+
+            <div class="scan-alat-fisik">
+                <label for="inputScanAlatAdmin">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
+                <input type="text" id="inputScanAlatAdmin" placeholder="Klik kolom ini, lalu tembak QR siswa dengan alat scan..." autocomplete="off">
+            </div>
+
+            <div id="adminScanPesan" class="notif-scan-hasil"></div>
+
+            <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
+                Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
+            </p>
         </div>
-        <canvas id="canvasScanAdmin" style="display:none;"></canvas>
-
-        <div class="scan-tombol">
-            <button id="btnMulaiScanAdmin" onclick="startScanAdmin()">▶ Mulai Scan</button>
-            <button id="btnFlashScanAdmin" type="button" style="display:none;background:#997404;">🔦 Senter</button>
-            <button id="btnStopScanAdmin" class="stop-btn" onclick="stopScanAdmin()" style="display:none;">⏹ Berhenti Scan</button>
-        </div>
-
-        <div class="scan-alat-fisik">
-            <label for="inputScanAlatAdmin">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
-            <input type="text" id="inputScanAlatAdmin" placeholder="Klik kolom ini, lalu tembak QR siswa dengan alat scan..." autocomplete="off">
-        </div>
-
-        <div id="adminScanPesan" style="display:none;background:#fff3cd;color:#856404;padding:10px;border-radius:10px;text-align:center;font-weight:bold;margin:15px 0;"></div>
-
-        <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
-            Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
-        </p>
 
         <hr>
 
@@ -3272,37 +3625,54 @@ html::-webkit-scrollbar,
 
             <hr>
 
-            <h3>Scan QR Siswa (Tidak Sholat)</h3>
-
-            <p id="adminStatusSesiScanSholat" style="color:#666;font-size:14px;text-align:center;">
-                Buka sesi konfirmasi sholat di atas untuk memulai scan.
-            </p>
-
-            <div class="scan-video-wrap">
-                <video id="videoScanSholat" autoplay muted playsinline></video>
-                <div class="scan-placeholder">
-                    <div class="scan-placeholder-ikon">📷</div>
-                    <div>Kamera belum aktif</div>
+            <div class="scan-card-modern">
+                <div class="scan-card-header">
+                    <div class="scan-card-title">
+                        <span class="scan-card-title-ikon">🔎</span>
+                        <span>Scan QR Siswa (Tidak Sholat)</span>
+                    </div>
+                    <div class="jam-live" data-jam-live>
+                        <div class="jam-live-waktu" data-jam-live-waktu>--:--:--</div>
+                        <div class="jam-live-tanggal" data-jam-live-tanggal>Memuat tanggal...</div>
+                    </div>
                 </div>
+
+                <p id="adminStatusSesiScanSholat" class="scan-status-teks">
+                    Buka sesi konfirmasi sholat di atas untuk memulai scan.
+                </p>
+
+                <div class="scan-video-wrap">
+                    <video id="videoScanSholat" autoplay muted playsinline></video>
+                    <div class="scan-placeholder">
+                        <div class="scan-placeholder-ikon">📷</div>
+                        <div>Kamera belum aktif</div>
+                    </div>
+                    <div class="scan-frame">
+                        <span class="scan-corner scan-corner-tl"></span>
+                        <span class="scan-corner scan-corner-tr"></span>
+                        <span class="scan-corner scan-corner-bl"></span>
+                        <span class="scan-corner scan-corner-br"></span>
+                    </div>
+                </div>
+                <canvas id="canvasScanSholat" style="display:none;"></canvas>
+
+                <div class="scan-tombol">
+                    <button id="btnMulaiScanSholat" onclick="startScanSholat()">▶ Mulai Scan</button>
+                    <button id="btnFlashScanSholat" type="button" style="display:none;background:#997404;">🔦 Senter</button>
+                    <button id="btnStopScanSholat" class="stop-btn" onclick="stopScanSholat()" style="display:none;">⏹ Berhenti Scan</button>
+                </div>
+
+                <div class="scan-alat-fisik">
+                    <label for="inputScanAlatSholat">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
+                    <input type="text" id="inputScanAlatSholat" placeholder="Klik kolom ini, lalu tembak QR siswa dengan alat scan..." autocomplete="off">
+                </div>
+
+                <div id="adminScanSholatPesan" class="notif-scan-hasil"></div>
+
+                <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
+                    Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
+                </p>
             </div>
-            <canvas id="canvasScanSholat" style="display:none;"></canvas>
-
-            <div class="scan-tombol">
-                <button id="btnMulaiScanSholat" onclick="startScanSholat()">▶ Mulai Scan</button>
-                <button id="btnFlashScanSholat" type="button" style="display:none;background:#997404;">🔦 Senter</button>
-                <button id="btnStopScanSholat" class="stop-btn" onclick="stopScanSholat()" style="display:none;">⏹ Berhenti Scan</button>
-            </div>
-
-            <div class="scan-alat-fisik">
-                <label for="inputScanAlatSholat">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
-                <input type="text" id="inputScanAlatSholat" placeholder="Klik kolom ini, lalu tembak QR siswa dengan alat scan..." autocomplete="off">
-            </div>
-
-            <div id="adminScanSholatPesan" style="display:none;background:#fff3cd;color:#856404;padding:10px;border-radius:10px;text-align:center;font-weight:bold;margin:15px 0;"></div>
-
-            <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
-                Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
-            </p>
 
             <hr>
 
@@ -3746,37 +4116,54 @@ html::-webkit-scrollbar,
 
             <hr>
 
-            <h3>Scan QR Presensi Tendik</h3>
-
-            <p id="adminStatusSesiScanTendik" style="color:#666;font-size:14px;text-align:center;">
-                Buka sesi presensi tendik di atas untuk memulai scan.
-            </p>
-
-            <div class="scan-video-wrap">
-                <video id="videoScanTendik" autoplay muted playsinline></video>
-                <div class="scan-placeholder">
-                    <div class="scan-placeholder-ikon">📷</div>
-                    <div>Kamera belum aktif</div>
+            <div class="scan-card-modern">
+                <div class="scan-card-header">
+                    <div class="scan-card-title">
+                        <span class="scan-card-title-ikon">🔎</span>
+                        <span>Scan QR Presensi Tendik</span>
+                    </div>
+                    <div class="jam-live" data-jam-live>
+                        <div class="jam-live-waktu" data-jam-live-waktu>--:--:--</div>
+                        <div class="jam-live-tanggal" data-jam-live-tanggal>Memuat tanggal...</div>
+                    </div>
                 </div>
+
+                <p id="adminStatusSesiScanTendik" class="scan-status-teks">
+                    Buka sesi presensi tendik di atas untuk memulai scan.
+                </p>
+
+                <div class="scan-video-wrap">
+                    <video id="videoScanTendik" autoplay muted playsinline></video>
+                    <div class="scan-placeholder">
+                        <div class="scan-placeholder-ikon">📷</div>
+                        <div>Kamera belum aktif</div>
+                    </div>
+                    <div class="scan-frame">
+                        <span class="scan-corner scan-corner-tl"></span>
+                        <span class="scan-corner scan-corner-tr"></span>
+                        <span class="scan-corner scan-corner-bl"></span>
+                        <span class="scan-corner scan-corner-br"></span>
+                    </div>
+                </div>
+                <canvas id="canvasScanTendik" style="display:none;"></canvas>
+
+                <div class="scan-tombol">
+                    <button id="btnMulaiScanTendik" onclick="startScanTendik()">▶ Mulai Scan</button>
+                    <button id="btnFlashScanTendik" type="button" style="display:none;background:#997404;">🔦 Senter</button>
+                    <button id="btnStopScanTendik" class="stop-btn" onclick="stopScanTendik()" style="display:none;">⏹ Berhenti Scan</button>
+                </div>
+
+                <div class="scan-alat-fisik">
+                    <label for="inputScanAlatTendik">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
+                    <input type="text" id="inputScanAlatTendik" placeholder="Klik kolom ini, lalu tembak QR tendik dengan alat scan..." autocomplete="off">
+                </div>
+
+                <div id="adminScanTendikPesan" class="notif-scan-hasil"></div>
+
+                <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
+                    Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
+                </p>
             </div>
-            <canvas id="canvasScanTendik" style="display:none;"></canvas>
-
-            <div class="scan-tombol">
-                <button id="btnMulaiScanTendik" onclick="startScanTendik()">▶ Mulai Scan</button>
-                <button id="btnFlashScanTendik" type="button" style="display:none;background:#997404;">🔦 Senter</button>
-                <button id="btnStopScanTendik" class="stop-btn" onclick="stopScanTendik()" style="display:none;">⏹ Berhenti Scan</button>
-            </div>
-
-            <div class="scan-alat-fisik">
-                <label for="inputScanAlatTendik">🔌 Atau pakai alat scan barcode/QR (USB/Bluetooth):</label>
-                <input type="text" id="inputScanAlatTendik" placeholder="Klik kolom ini, lalu tembak QR tendik dengan alat scan..." autocomplete="off">
-            </div>
-
-            <div id="adminScanTendikPesan" style="display:none;background:#fff3cd;color:#856404;padding:10px;border-radius:10px;text-align:center;font-weight:bold;margin:15px 0;"></div>
-
-            <p style="color:#666;font-size:13px;text-align:center;margin-top:10px;">
-                Kamera memerlukan izin akses dan halaman diakses lewat HTTPS atau localhost.
-            </p>
 
             <hr>
 
@@ -5752,6 +6139,30 @@ function tutupFormLogin(){
     document.getElementById("password").value = "";
 }
 
+// ====== SPLASH TRANSISI: tampilkan logo dulu, baru jalankan "callback"
+//        yang memunculkan halaman tujuan (Siswa/Guru/Admin/Ortu) ======
+function tampilkanSplashTransisi(callback){
+    let splash = document.getElementById("splashTransisiLogin");
+
+    splash.classList.remove("keluar");
+    splash.classList.add("tampil");
+
+    // logo tampil dulu ± 750ms, baru halaman tujuan disiapkan di baliknya
+    setTimeout(function(){
+        callback();
+
+        // sesaat kemudian splash memudar, memperlihatkan halaman tujuan
+        setTimeout(function(){
+            splash.classList.add("keluar");
+
+            setTimeout(function(){
+                splash.classList.remove("tampil","keluar");
+            }, 400);
+        }, 150);
+
+    }, 750);
+}
+
 function login(){
 
     let role = document.getElementById("role").value;
@@ -5767,17 +6178,19 @@ function login(){
         if(akun){
             siswaLogin = { kelas: akun.kelas, nama: akun.nama, username: akun.username };
 
-            document.body.classList.add("mode-app");
-            document.getElementById("halamanLogin").style.display="none";
-            document.getElementById("halamanSiswa").style.display="flex";
+            tampilkanSplashTransisi(function(){
+                document.body.classList.add("mode-app");
+                document.getElementById("halamanLogin").style.display="none";
+                document.getElementById("halamanSiswa").style.display="flex";
 
-            document.getElementById("salamSiswa").innerText =
-                "Halo, " + akun.nama + " — Kelas " + akun.kelas;
+                document.getElementById("salamSiswa").innerText =
+                    "Halo, " + akun.nama + " — Kelas " + akun.kelas;
 
-            tampilkanDaftarMapel();
-            tampilkanNilaiSiswa();
-            tampilkanQRSiswa();
-            gantiMenuSiswa('presensi');
+                tampilkanDaftarMapel();
+                tampilkanNilaiSiswa();
+                tampilkanQRSiswa();
+                gantiMenuSiswa('presensi');
+            });
         } else {
             alert("Username atau Password Salah! Hubungi Admin/Operator sekolah untuk mendapatkan akun.");
         }
@@ -5792,18 +6205,20 @@ function login(){
         if(akun){
             guruLogin = { nama: akun.nama, username: akun.username, mapel: akun.mapel || "" };
 
-            document.body.classList.add("mode-app");
-            document.getElementById("halamanLogin").style.display="none";
-            document.getElementById("halamanGuru").style.display="flex";
+            tampilkanSplashTransisi(function(){
+                document.body.classList.add("mode-app");
+                document.getElementById("halamanLogin").style.display="none";
+                document.getElementById("halamanGuru").style.display="flex";
 
-            document.getElementById("salamGuru").innerText = "Halo, " + akun.nama +
-                (akun.mapel ? " — Mengajar " + akun.mapel : "");
+                document.getElementById("salamGuru").innerText = "Halo, " + akun.nama +
+                    (akun.mapel ? " — Mengajar " + akun.mapel : "");
 
-            tampilkanData();
-            renderSesiAktif();
-            renderNilaiGuru();
-            cekSesiUntukScan();
-            gantiMenuGuru('scan');
+                tampilkanData();
+                renderSesiAktif();
+                renderNilaiGuru();
+                cekSesiUntukScan();
+                gantiMenuGuru('scan');
+            });
         } else {
             alert("Username atau Password Salah!");
         }
@@ -5818,13 +6233,15 @@ function login(){
         if(akun){
             adminLogin = { nama: akun.nama, username: akun.username };
 
-            document.body.classList.add("mode-app");
-            document.getElementById("halamanLogin").style.display="none";
-            document.getElementById("halamanAdmin").style.display="flex";
+            tampilkanSplashTransisi(function(){
+                document.body.classList.add("mode-app");
+                document.getElementById("halamanLogin").style.display="none";
+                document.getElementById("halamanAdmin").style.display="flex";
 
-            document.getElementById("salamAdmin").innerText = "Masuk sebagai " + akun.nama;
+                document.getElementById("salamAdmin").innerText = "Masuk sebagai " + akun.nama;
 
-            gantiMenuAdmin('dash');
+                gantiMenuAdmin('dash');
+            });
         } else {
             alert("Username atau Password Salah!");
         }
@@ -5844,16 +6261,18 @@ function login(){
                 usernameAnak: akun.usernameAnak
             };
 
-            document.body.classList.add("mode-app");
-            document.getElementById("halamanLogin").style.display="none";
-            document.getElementById("halamanOrtu").style.display="flex";
+            tampilkanSplashTransisi(function(){
+                document.body.classList.add("mode-app");
+                document.getElementById("halamanLogin").style.display="none";
+                document.getElementById("halamanOrtu").style.display="flex";
 
-            document.getElementById("salamOrtu").innerText =
-                "Halo, " + akun.nama + " — Wali dari " + akun.namaAnak;
+                document.getElementById("salamOrtu").innerText =
+                    "Halo, " + akun.nama + " — Wali dari " + akun.namaAnak;
 
-            tampilkanPresensiOrtu();
-            tampilkanNilaiOrtu();
-            gantiMenuOrtu('presensi');
+                tampilkanPresensiOrtu();
+                tampilkanNilaiOrtu();
+                gantiMenuOrtu('presensi');
+            });
         } else {
             alert("Username atau Password Salah!");
         }
@@ -6628,21 +7047,39 @@ function bukaKunciSuaraScan(){
     } catch(e){}
 }
 
+/* ====================================================================
+   ======  KARTU NOTIFIKASI HASIL SCAN (DIPAKAI 4 MENU SCAN)  ======
+   Fungsi bantu bersama: mengubah teks polos ("✅ Budi berhasil...")
+   jadi kartu dengan ikon bulat besar + teks rapi, supaya begitu QR
+   siswa terbaca, langsung terlihat JELAS bahwa presensi tercatat -
+   bukan cuma tulisan kecil warna-warni seperti sebelumnya. */
+function ikonNotifScan(tipe){
+    return { success:"✓", warning:"!", danger:"✕", info:"i" }[tipe] || "!";
+}
+
+function isiNotifScanHasil(idElemen, teks, tipe){
+
+    let pesan = document.getElementById(idElemen);
+    if(!pesan) return;
+
+    // buang emoji/simbol bawaan di awal teks (✅/⚠/ℹ️/dll) supaya tidak
+    // dobel dengan ikon bulat yang sudah disediakan kartu ini
+    let teksBersih = String(teks).replace(/^[^\w\d]+\s*/u, "").trim();
+
+    pesan.innerHTML = `
+        <div class="notif-scan-ikon">${ikonNotifScan(tipe)}</div>
+        <div class="notif-scan-teks">${teksBersih}</div>
+    `;
+
+    // reset lalu tambahkan lagi class "tampil" supaya animasi (termasuk
+    // cincin nadi utk hasil sukses) tetap terlihat walau scan berturut-turut
+    pesan.className = "notif-scan-hasil tipe-" + (tipe || "warning");
+    void pesan.offsetWidth; // paksa reflow biar animasi CSS restart dari awal
+    pesan.classList.add("tampil");
+}
+
 function tampilkanPesanScan(teks, tipe){
-
-    let pesan = document.getElementById("scanPesan");
-
-    let warna = {
-        success: ["#d4edda","#155724"],
-        warning: ["#fff3cd","#856404"],
-        danger:  ["#f8d7da","#721c24"],
-        info:    ["#cff4fc","#055160"]
-    }[tipe] || ["#fff3cd","#856404"];
-
-    pesan.style.background = warna[0];
-    pesan.style.color = warna[1];
-    pesan.innerHTML = teks;
-    pesan.style.display = "block";
+    isiNotifScanHasil("scanPesan", teks, tipe);
 }
 
 function prosesHasilScan(teks){
@@ -8364,20 +8801,7 @@ function renderAdminPresensiSekolahHariIni(){
 }
 
 function tampilkanPesanScanAdmin(teks, tipe){
-
-    let pesan = document.getElementById("adminScanPesan");
-
-    let warna = {
-        success: ["#d4edda","#155724"],
-        warning: ["#fff3cd","#856404"],
-        danger:  ["#f8d7da","#721c24"],
-        info:    ["#cff4fc","#055160"]
-    }[tipe] || ["#fff3cd","#856404"];
-
-    pesan.style.background = warna[0];
-    pesan.style.color = warna[1];
-    pesan.innerHTML = teks;
-    pesan.style.display = "block";
+    isiNotifScanHasil("adminScanPesan", teks, tipe);
 }
 
 function prosesHasilScanAdmin(teks){
@@ -8634,20 +9058,7 @@ function renderAdminPresensiSholatHariIni(){
 }
 
 function tampilkanPesanScanSholat(teks, tipe){
-
-    let pesan = document.getElementById("adminScanSholatPesan");
-
-    let warna = {
-        success: ["#d4edda","#155724"],
-        warning: ["#fff3cd","#856404"],
-        danger:  ["#f8d7da","#721c24"],
-        info:    ["#cff4fc","#055160"]
-    }[tipe] || ["#fff3cd","#856404"];
-
-    pesan.style.background = warna[0];
-    pesan.style.color = warna[1];
-    pesan.innerHTML = teks;
-    pesan.style.display = "block";
+    isiNotifScanHasil("adminScanSholatPesan", teks, tipe);
 }
 
 function prosesHasilScanSholat(teks){
@@ -10636,20 +11047,7 @@ function adminTutupSesiPresensiTendik(){
 }
 
 function tampilkanPesanScanTendik(teks, tipe){
-
-    let pesan = document.getElementById("adminScanTendikPesan");
-
-    let warna = {
-        success: ["#d4edda","#155724"],
-        warning: ["#fff3cd","#856404"],
-        danger:  ["#f8d7da","#721c24"],
-        info:    ["#cff4fc","#055160"]
-    }[tipe] || ["#fff3cd","#856404"];
-
-    pesan.style.background = warna[0];
-    pesan.style.color = warna[1];
-    pesan.innerHTML = teks;
-    pesan.style.display = "block";
+    isiNotifScanHasil("adminScanTendikPesan", teks, tipe);
 }
 
 // ====== PROSES HASIL SCAN QR TENDIK (QR SAMA DIPAKAI 2X: SCAN 1=MASUK, SCAN 2=PULANG) ======
@@ -12028,6 +12426,50 @@ pasangScannerFisik({
     // "pointerdown" mencakup sentuhan jari (HP) maupun klik mouse (desktop)
     // dalam satu event, jadi tidak perlu dobel listener utk touch & mouse
     document.addEventListener("pointerdown", penanganSentuh);
+
+})();
+
+/* ====================================================================
+   ======  JAM REAL-TIME DI SETIAP MENU SCAN  ======
+   Menampilkan jam berjalan (update tiap detik) + tanggal hari ini
+   dalam Bahasa Indonesia, di SEMUA menu scan (Scan Presensi Guru,
+   Scan Presensi Sekolah, Konfirmasi Tidak Sholat, Scan Presensi
+   Tendik) sekaligus, karena semuanya memakai atribut data-jam-live
+   yang sama. Otomatis jalan di browser maupun saat dibuka sebagai
+   "app" Android (Add to Home screen), tanpa perlu koneksi internet. */
+(function(){
+
+    const NAMA_HARI = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    const NAMA_BULAN = ["Januari","Februari","Maret","April","Mei","Juni",
+                         "Juli","Agustus","September","Oktober","November","Desember"];
+
+    function duaDigit(angka){
+        return angka < 10 ? "0" + angka : "" + angka;
+    }
+
+    function perbaruiJamLive(){
+        let sekarang = new Date();
+
+        let teksWaktu = duaDigit(sekarang.getHours()) + ":" +
+                         duaDigit(sekarang.getMinutes()) + ":" +
+                         duaDigit(sekarang.getSeconds());
+
+        let teksTanggal = NAMA_HARI[sekarang.getDay()] + ", " +
+                           sekarang.getDate() + " " +
+                           NAMA_BULAN[sekarang.getMonth()] + " " +
+                           sekarang.getFullYear();
+
+        document.querySelectorAll("[data-jam-live-waktu]").forEach(function(el){
+            el.textContent = teksWaktu;
+        });
+
+        document.querySelectorAll("[data-jam-live-tanggal]").forEach(function(el){
+            el.textContent = teksTanggal;
+        });
+    }
+
+    perbaruiJamLive();
+    setInterval(perbaruiJamLive, 1000);
 
 })();
 
