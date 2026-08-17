@@ -2140,13 +2140,23 @@ tbody tr:hover{
         display:none;
     }
 
+    /* font tabel kartu SENGAJA dikunci di sini (bukan ikut mengecil lewat
+       @media max-width:480px "table{font-size:10px}" di atas) supaya tetap
+       nyaman dibaca di layar HP kecil sekalipun - lebih spesifik (element+
+       class) daripada selector "table" biasa jadi otomatis menang. */
+    table.tabel-kartu{
+        border-collapse:separate;
+        font-size:13.5px;
+    }
+
     table.tabel-kartu tbody tr{
         display:block;
         background:#fff;
         border:1px solid #e4dede;
-        border-radius:10px;
-        padding:8px 10px;
+        border-radius:12px;
+        padding:10px 12px;
         margin-bottom:10px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
         animation:none;
     }
 
@@ -2162,20 +2172,58 @@ tbody tr:hover{
         text-align:right;
         border:none;
         border-bottom:1px solid #f0f0f0;
-        padding:6px 2px;
+        padding:7px 2px;
         white-space:normal;
+        font-size:13.5px;
+        color:#222;
+        font-weight:600;
     }
 
     table.tabel-kartu tbody td:last-child{
         border-bottom:none;
     }
 
+    /* Aturan label ("::before") umum untuk semua kolom DULU, baru aturan
+       khusus kolom pertama SETELAHNYA - urutan ini disengaja: keduanya
+       punya "bobot" (specificity) CSS yang sama, jadi kalau ada bentrok,
+       aturan yang ditulis PALING BELAKANG di source yang menang. Supaya
+       kolom pertama tetap terlihat beda (jadi judul kartu), aturan
+       khususnya harus berada di bawah aturan umum ini. */
     table.tabel-kartu tbody td[data-label]::before{
         content:attr(data-label);
-        font-weight:bold;
-        color:#555;
+        font-weight:700;
+        font-size:11.5px;
+        letter-spacing:0.2px;
+        text-transform:uppercase;
+        color:#8a93a3;
         text-align:left;
         margin-right:8px;
+        flex:0 0 auto;
+    }
+
+    /* kolom pertama (biasanya "Nama") ditonjolkan jadi semacam judul kartu,
+       supaya di sekilas pandang langsung kelihatan ini data milik siapa,
+       tanpa perlu baca label satu-satu dulu. */
+    table.tabel-kartu tbody td:first-child{
+        display:block;
+        text-align:left;
+        font-size:15px;
+        font-weight:800;
+        color:#0d6efd;
+        border-bottom:2px solid #eef3fb;
+        padding:2px 2px 8px;
+        margin-bottom:4px;
+    }
+
+    table.tabel-kartu tbody td:first-child::before{
+        content:attr(data-label);
+        display:block;
+        font-size:10.5px;
+        font-weight:700;
+        letter-spacing:0.4px;
+        text-transform:uppercase;
+        color:#8a93a3;
+        margin-bottom:2px;
     }
 
     /* baris pesan kosong ("Belum ada data...") memakai colspan, jadi
@@ -12320,37 +12368,73 @@ pasangScannerFisik({
    difilter/dicari, jadi tidak perlu dipanggil manual di tiap menu. */
 (function(){
 
+    // Ambil judul kolom dari <thead><th> sebuah tabel. Dipisah jadi fungsi
+    // sendiri supaya bisa dipakai ulang baik untuk memproses tabel penuh
+    // maupun untuk satu baris <tr> baru yang muncul belakangan.
+    function ambilLabelKolom(tabel){
+        let headerSel = tabel.querySelectorAll("thead th");
+        return Array.prototype.map.call(headerSel, function(th){
+            return th.textContent.trim();
+        });
+    }
+
+    // Tempelkan data-label ke tiap <td> pada SATU baris <tr>.
+    function beriLabelBaris(tr, labelKolom){
+        if(labelKolom.length === 0) return;
+        let selTd = tr.querySelectorAll("td");
+        selTd.forEach(function(td, i){
+            if(td.hasAttribute("colspan")) return; // baris pesan/kosong dibiarkan tanpa label
+            if(labelKolom[i]) td.setAttribute("data-label", labelKolom[i]);
+        });
+    }
+
+    // PENTING: fungsi ini SENGAJA tidak "mengingat" tabel yang sudah pernah
+    // diproses (tidak ada flag "sudah selesai") lalu berhenti. Sebabnya:
+    // hampir semua menu di sistem ini mengisi ULANG isi <tbody> tabel yang
+    // SAMA (lewat tbody.innerHTML = ...) setiap kali data difilter/dicari/
+    // dimuat ulang — tabelnya sendiri tidak berubah, cuma baris di dalamnya
+    // yang diganti. Baris-baris baru itu butuh data-label baru juga, jadi
+    // pemberian label harus selalu dijalankan ulang tiap ada baris baru,
+    // bukan cuma sekali di awal. (Sebelumnya ada flag "responsifSiap" yang
+    // membuat tabel berhenti diproses setelah render pertama -- inilah
+    // sebab data di kartu HP tampil TANPA label ketika filter diganti.)
+    // Menempel data-label yang sama berkali-kali tidak masalah/tidak mahal,
+    // jadi aman untuk selalu diulang.
     function siapkanTabelResponsif(root){
 
         if(!root || !root.querySelectorAll) return;
 
+        // 1) Proses tabel utuh (mis. saat tabel itu sendiri baru dibuat/dipasang)
         let daftarTabel = root.matches && root.matches("table")
             ? [root]
             : root.querySelectorAll("table");
 
         daftarTabel.forEach(function(tabel){
+            let labelKolom = ambilLabelKolom(tabel);
+            if(labelKolom.length === 0) return; // tabel tanpa header dibiarkan apa adanya
 
-            if(tabel.dataset.responsifSiap === "1") return;
-
-            let headerSel = tabel.querySelectorAll("thead th");
-            if(headerSel.length === 0) return; // tabel tanpa header (mis. pesan kosong saja) dibiarkan apa adanya
-
-            let labelKolom = Array.prototype.map.call(headerSel, function(th){
-                return th.textContent.trim();
-            });
-
-            let barisBody = tabel.querySelectorAll("tbody tr");
-
-            barisBody.forEach(function(tr){
-                let selTd = tr.querySelectorAll("td");
-                selTd.forEach(function(td, i){
-                    if(td.hasAttribute("colspan")) return; // baris pesan/kosong dibiarkan tanpa label
-                    if(labelKolom[i]) td.setAttribute("data-label", labelKolom[i]);
-                });
+            tabel.querySelectorAll("tbody tr").forEach(function(tr){
+                beriLabelBaris(tr, labelKolom);
             });
 
             tabel.classList.add("tabel-kartu");
-            tabel.dataset.responsifSiap = "1";
+        });
+
+        // 2) Tangani kasus paling umum: hanya baris <tr> baru yang muncul
+        //    di dalam <tbody> (tabelnya sendiri tidak ikut berubah), misalnya
+        //    akibat "tbody.innerHTML = ..." saat data difilter. Di sinilah
+        //    letak penyebab tampilan kartu tanpa label di HP sebelumnya.
+        let daftarBaris = root.matches && root.matches("tr")
+            ? [root]
+            : root.querySelectorAll("tr");
+
+        daftarBaris.forEach(function(tr){
+            let tabel = tr.closest("table");
+            if(!tabel) return;
+            let labelKolom = ambilLabelKolom(tabel);
+            if(labelKolom.length === 0) return;
+            beriLabelBaris(tr, labelKolom);
+            tabel.classList.add("tabel-kartu");
         });
     }
 
@@ -12365,7 +12449,7 @@ pasangScannerFisik({
 
     // pantau perubahan konten: banyak menu di sistem ini mengisi ulang
     // tabel lewat innerHTML setelah data dimuat/difilter/dicari, supaya
-    // tabel baru yang muncul otomatis ikut diberi label & class kartu
+    // baris/tabel baru yang muncul otomatis ikut diberi label & class kartu
     let pengamatTabel = new MutationObserver(function(daftarPerubahan){
         daftarPerubahan.forEach(function(perubahan){
             perubahan.addedNodes.forEach(function(node){
