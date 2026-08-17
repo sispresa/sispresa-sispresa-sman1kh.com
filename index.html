@@ -852,8 +852,21 @@ select:focus{
     padding:15px 20px;
     margin-top:20px;
     margin-bottom:20px;
-    text-align:left;
+    text-align:center; /* SEBELUMNYA "left" - diubah supaya judul, teks
+       keterangan, dan label filter di tiap menu rata TENGAH semua, tidak
+       lagi kelihatan miring/berat sebelah ke kiri seperti sebelumnya. */
     box-shadow:0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* Input/select/textarea di dalam menu TETAP rata kiri saat mengetik,
+   supaya nyaman dibaca (kalau ikut center, teks yang diketik/isian
+   tanggal jadi terasa aneh posisinya di tengah kotak). Tabel tidak perlu
+   disebut di sini karena th/td memang sudah punya aturan rata-tengahnya
+   sendiri yang lebih spesifik, jadi otomatis tidak terpengaruh. */
+.sesi-panel input,
+.sesi-panel select,
+.sesi-panel textarea{
+    text-align:left;
 }
 
 .sesi-panel h3{
