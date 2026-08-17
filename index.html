@@ -5221,9 +5221,44 @@ function mulaiAutoRefreshDataJarangBerubah(){
     setInterval(muatUlangDataJarangBerubah, INTERVAL_AUTO_REFRESH_MS);
 }
 
-// dipanggil tiap kali ada data yang berubah (dari perangkat manapun), supaya
-// halaman yang sedang aktif ikut ter-refresh tanpa perlu reload manual
+// ====================================================================
+// ======  KENAPA MENU "DATA PRESENSI SEKOLAH" TERASA NGELAG  ======
+// Saat listener Firebase ".on('child_added')" baru dipasang (mis. begitu
+// admin login / buka halaman), Firebase akan memanggil callback-nya SEKALI
+// untuk SETIAP data yang SUDAH ADA di database -- bukan cuma data baru.
+// Untuk presensi sekolah yang terkumpul tiap hari sepanjang tahun ajaran,
+// itu bisa RATUSAN/RIBUAN panggilan beruntun dalam waktu sangat singkat.
+// Sebelumnya, tiap satu panggilan ini langsung memanggil render ULANG
+// SELURUH tabel yang sedang terbuka (segarkanTampilanSetelahSyncSekarang) --
+// kalau menu "Data Presensi Sekolah" sedang dibuka pas data sebanyak itu
+// mengalir masuk, halaman jadi macet/ngelag karena tabel di-render ulang
+// ratusan/ribuan kali dalam sekejap, padahal cukup di-render SEKALI SAJA
+// setelah semua datanya selesai masuk.
+//
+// Solusinya: "debounce" -- setiap kali fungsi ini dipanggil, jadwalkan
+// render dengan jeda singkat (180ms). Kalau ada panggilan baru lagi
+// SEBELUM jeda itu habis (artinya masih ada data yang terus mengalir),
+// jadwal sebelumnya dibatalkan dan diganti jadwal baru. Hasilnya: selama
+// data masih deras mengalir, tidak ada render sama sekali; render baru
+// benar-benar dijalankan SEKALI saat data berhenti mengalir (jeda 180ms
+// tanpa panggilan baru). Ini tidak mengubah perilaku yang terlihat user
+// (perubahan tetap muncul otomatis), cuma menghindari ratusan render
+// yang tidak perlu dalam waktu singkat.
+// ====================================================================
+let _timerSegarkanTampilan = null;
+
 function segarkanTampilanSetelahSync(sumberPerubahan){
+    if(_timerSegarkanTampilan) clearTimeout(_timerSegarkanTampilan);
+    _timerSegarkanTampilan = setTimeout(function(){
+        _timerSegarkanTampilan = null;
+        segarkanTampilanSetelahSyncSekarang(sumberPerubahan);
+    }, 180);
+}
+
+// dipanggil (lewat debounce di atas) tiap kali ada data yang berubah (dari
+// perangkat manapun), supaya halaman yang sedang aktif ikut ter-refresh
+// tanpa perlu reload manual
+function segarkanTampilanSetelahSyncSekarang(sumberPerubahan){
 
     if(!firebaseSudahSiap) return;
 
