@@ -7666,6 +7666,20 @@ function gantiMenuAdmin(menu){
     }
     if(menu === "sekolah"){
         isiSemuaDropdownKelas();
+        // PENYEBAB UTAMA "NGELAG" saat buka menu ini: sebelumnya Filter Tanggal
+        // dibiarkan KOSONG secara default, sehingga tabel langsung menampilkan
+        // SELURUH riwayat presensi sekolah dari awal tahun ajaran (bisa ribuan
+        // baris sekaligus) begitu menu ini dibuka -- inilah yang bikin halaman
+        // macet/lag, bukan cuma soal sinkronisasi Firebase. Sekarang Filter
+        // Tanggal otomatis diisi tanggal HARI INI dulu (kalau memang masih
+        // kosong), supaya yang pertama kali dirender cuma data hari ini saja
+        // (jumlahnya wajar, sebanyak siswa yang ada). Admin tetap bisa hapus
+        // filter tanggal ini secara manual kalau memang ingin melihat semua
+        // riwayat, tapi itu jadi pilihan sadar, bukan default yang berat.
+        let filterTanggalSekolahEl = document.getElementById("adminSekolahFilterTanggal");
+        if(filterTanggalSekolahEl && !filterTanggalSekolahEl.value){
+            filterTanggalSekolahEl.value = new Date().toISOString().slice(0,10);
+        }
         renderAdminSekolah();
     }
     if(menu === "scansholat"){
@@ -9383,13 +9397,26 @@ function renderAdminSekolah(){
             return;
         }
 
+        // PENTING UNTUK KECEPATAN: sebelumnya, status tiap siswa dicari dengan
+        // "dataAbsensiSekolah.find(...)" DI DALAM perulangan siswa -- kalau
+        // riwayat presensi sekolah sudah terkumpul ribuan baris (data setahun
+        // penuh), ini berarti tiap 1 siswa harus menelusuri ribuan baris itu
+        // dari awal, dan itu diulang untuk SETIAP siswa satu-satu (jadi jumlah
+        // siswa dikali jumlah riwayat = bisa jutaan kali pengecekan). Sekarang
+        // dibuat SEKALI saja sebuah "peta pencarian" (Map) khusus untuk
+        // tanggal yang sedang difilter, jadi mencari status tiap siswa jadi
+        // secepat langsung "buka halaman kamus", bukan menelusuri satu-satu.
+        let petaPresensiTanggalIni = new Map();
+        dataAbsensiSekolah.forEach(function(item){
+            if(item.tanggal !== filterTanggal) return; // lewati baris tanggal lain, cukup 1x jalan
+            petaPresensiTanggalIni.set(item.nama + "||" + item.kelas, item);
+        });
+
         let htmlTgl = "";
 
         siswaDitampilkan.forEach(function(siswa){
 
-            let item = dataAbsensiSekolah.find(a =>
-                a.nama === siswa.nama && a.kelas === siswa.kelas && a.tanggal === filterTanggal
-            );
+            let item = petaPresensiTanggalIni.get(siswa.nama + "||" + siswa.kelas);
 
             let statusHtml = item
                 ? badgeStatus(item.status)
